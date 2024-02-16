@@ -1,0 +1,53 @@
+const express = require ('express');
+const router = express.Router();
+
+const voitures = [
+    {id: 1, name:"clio"},
+    {id: 2, name:"megane"},
+    {id: 3, name:"range"}
+]
+
+
+router.post('/add', (req, res) => {
+    const nouvelleVoiture = req.body;
+    console.log(nouvelleVoiture)
+    voitures.push(nouvelleVoiture);
+    res.json({ message: 'Voiture ajoutée avec succès', voiture: nouvelleVoiture });
+});
+
+router.get('/all', (req, res) => {
+    res.json(voitures);
+});
+
+router.get('/:id', (req, res) => {
+    const voitureId = parseInt(req.params.id);
+    const voiture = voitures.find(voiture => voiture.id === voitureId);
+    if (!voiture) {
+      res.status(404).send('not found');
+    } else {
+      res.json(voiture);
+    }
+});
+
+router.put('/voitures/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = voitures.findIndex(v => v.id === id);
+    if (index !== -1) {
+        voitures[index] = req.body;
+        res.json({ message: 'Voiture modifiée avec succès', voiture: voitures[index] });
+    } else {
+        res.status(404).json({ message: 'Voiture non trouvée' });
+    }
+});
+
+router.delete('/voitures/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = voitures.findIndex(v => v.id === id);
+    if (index !== -1) {
+        voitures.splice(index, 1);
+        res.json({ message: 'Voiture supprimée avec succès' });
+    } else {
+        res.status(404).json({ message: 'Voiture non trouvée' });
+    }
+});
+module.exports = router;
